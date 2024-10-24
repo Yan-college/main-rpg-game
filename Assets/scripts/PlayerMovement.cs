@@ -7,9 +7,11 @@ public class PlayerMovement : MonoBehaviour
     public float moveSpeed = 5f;      // Movement speed
     public float tileSize = 1f;       // The size of one tile (assuming uniform grid)
     public Rigidbody2D rb;            // 2D Rigidbody for movement
+    public Animator animator;         // Animator component for handling animations
 
     private Vector2 targetPosition;   // The position the player will move to
     private bool isMoving = false;    // Check if the player is currently moving
+    private Vector2 lastMoveDirection; // To store the last movement direction (for idle animations)
 
     void Start()
     {
@@ -33,6 +35,21 @@ public class PlayerMovement : MonoBehaviour
                 // Set the target position one tile away in the chosen direction
                 targetPosition = rb.position + input * tileSize;
                 isMoving = true;  // Start the movement
+
+                // Set animation parameters
+                animator.SetFloat("moveX", input.x);
+                animator.SetFloat("moveY", input.y);
+                animator.SetBool("isMoving", true);
+
+                // Store the last movement direction for idle animations
+                lastMoveDirection = input;
+            }
+            else
+            {
+                // If no input, set idle animation for the last direction
+                animator.SetBool("isMoving", false);
+                animator.SetFloat("moveX", lastMoveDirection.x);
+                animator.SetFloat("moveY", lastMoveDirection.y);
             }
         }
     }
